@@ -9,13 +9,12 @@ ItemDelegate{
 
     id: root
     //parent保存其可视父项
-    width: parent.width
+    width: 400 //不知道为什么使用parent会报width是空，后续再观察下
     //按钮是否可检查，检查按钮开关状态
     checkable: true
-
     //ListView显示模型中的数据，view管理委托示例的视图。currentIndex保存当前项的索引。index是视图索引
-    onClicked: ListView.view.currentIndex = index
-    onToggled: console.log(index); //调试输出
+    onClicked: {ListView.view.currentIndex = index}
+    onToggled: {console.log(index);} //调试输出
 
     //动态创建的项目需要显式地为contentItem添加父元素。:ColumnLayout在网格中动态排列项的方法，列
     contentItem: ColumnLayout{
@@ -28,7 +27,7 @@ ItemDelegate{
                 id: dateColumn
                 //只读属性。model调用模型中的数据。
                 readonly property date alarmDate: new Date(
-                    model.year, model.month - 1, model.day, model.hour, model.minute)
+                                                      model.year, model.month - 1, model.day, model.hour, model.minute)
                 Label{
                     id: itmeLabel
                     //字体大小
@@ -36,7 +35,7 @@ ItemDelegate{
                     //设置自定义属性alarmDate的语言环境。toLocaleTimeString将日期转化为指定的环境格式。window.locale窗口的本地区域。ShortFormat为短格式
                     text: dateColumn.alarmDate.toLocaleTimeString(window.locale, Locale.ShortFormat)
 
-                    }
+                }
                 //行
                 RowLayout{
                     Label{
@@ -60,10 +59,16 @@ ItemDelegate{
             }
             //选项按钮，开关状态按钮
             Switch{
+                id:isSwitch
                 //checked按钮是否被选中
                 checked: model.activated
                 //指定对齐方式，与上级保持一致
                 Layout.alignment: Qt.AlignTop
+                onClicked:
+                {
+                    window.whichBtn(index,isSwitch.checked)
+                }
+
             }
 
         }
@@ -118,18 +123,23 @@ ItemDelegate{
             onTextEdited:
             {
                 model.label = text
-                window.onSendText(text);
-;            }
+                window.onSendText(index,text);
+                          }
         }
-
+        //不晓得怎么把index对应上，暂时先隐藏了
         Button{
             id: deleteAlarmButton
             text: qsTr("删除")
             width: 40
             height: 40
-            visible: root.checked //可见状态
+        //    visible: root.checked //可见状态
+            visible:false
             //单击后删除项
-            onClicked: root.ListView.view.model.remove(root.ListView.view.currentIndex,1);
+            onClicked:{
+                window.deleteBtn(root.ListView.view.currentIndex);
+                console.log("执行")
+                root.ListView.view.model.remove(root.ListView.view.currentIndex,1);
+            }
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿#include "CppObject.h"
-#include <QDateTime>
-#include <QDebug>
-#include <QDate>
+
 CppObject::CppObject(QObject *parent)
     : QObject(parent)
 {
@@ -10,15 +8,16 @@ CppObject::CppObject(QObject *parent)
     timer = new QTimer();
     connect(timer,&QTimer::timeout,[this]
     {
-         QDateTime time = QDateTime::currentDateTime(); // 获取当前时间
-         year = time.date().year()==alarm_time.toStringList().at(0).toInt();
-         month = time.date().month()==alarm_time.toStringList().at(1).toInt();
-         day = time.date().day()==alarm_time.toStringList().at(2).toInt();
-         minute = time.time().minute()==alarm_time.toStringList().at(3).toInt();
-         hour = time.time().hour()==alarm_time.toStringList().at(4).toInt();
-           qDebug()<<"---------------"<<year<<month<<day<<hour<<minute;
-           qDebug()<< time.time().hour()<<time.time().minute();
-         checktime(year,month,day,hour,minute);
+        QDateTime time1 = QDateTime::currentDateTime(); // 获取当前时间
+        for(int i=0;i<alarm_date.size();++i)
+        {
+            qDebug()<<alarm_date.at(i).toTime_t()<<time1.toTime_t();
+            if(alarm_date.at(i).toTime_t()-time1.toTime_t()<=2)
+            {
+                qDebug()<<i;
+                checktime(i);
+            }
+        }
 
     });
     connect(this,&CppObject::SendText,speak,&Speak::GetText);
@@ -28,27 +27,48 @@ CppObject::CppObject(QObject *parent)
 
 void CppObject::cppSlotA(QVariant date)
 {
-    qDebug()<<"收到日期"<<date.toStringList();
-   alarm_time = date;
-   timer->start(2000);
+    alarm_time = date;
+    QString datetime = QString("%1-%2-%3 %4:%5").arg(alarm_time.toStringList().at(0)).arg(alarm_time.toStringList().at(1))
+            .arg(alarm_time.toStringList().at(2)).arg(alarm_time.toStringList().at(4))
+            .arg(alarm_time.toStringList().at(3));
+    time = QDateTime::fromString(datetime, "yyyy-MM-dd hh:mm");
+    alarm_date.append(time);
+    qDebug()<<"收到";
+    timer->start(2000);
 }
 
-void CppObject::checktime(bool year, bool month, bool day, bool hour, bool minute)
+void CppObject::checktime(int index)
 {
-    if(year&&month&day&&hour&&minute)
+    qDebug()<<"传来的index"<<index;
+    if(which_date.find(index).value())
     {
-        qDebug()<<"true";
-        emit ShouldSpeak();
+        qDebug()<<"正确";
+        emit ShouldSpeak(index);
         emit ShouldShow();
         timer->stop();
     }
-    else {
-
-    }
 }
 
-void CppObject::getText(QString alarm_text)
+void CppObject::getText(int index,QString alarm_text)//闹钟提示内容
 {
-    qDebug()<<alarm_text;
+    emit SendText(index,alarm_text);
+}
+
+void CppObject::getState(int index, bool state)//修改或添加
+{
+    if(which_date.contains(index))
+    {
+        which_date.find(index).value()=state;
+    }
+    else
+    {
+        which_date.insert(index,state);
+    }
+
+}
+//删除闹钟,后续实现
+void CppObject::deleteState(int index)
+{
+
 }
 

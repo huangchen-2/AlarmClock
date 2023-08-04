@@ -13,6 +13,7 @@ Dialog{
     property AlarmModel alarmModel
     property var date :[]
 
+
     //小于10时前面加个"0"
     function formatNumber(number) {
         return number < 10 && number >= 0 ? "0" + number : number.toString()
@@ -27,7 +28,7 @@ Dialog{
                               "day": dayTumbler.currentIndex + 1,
                               "month": monthTumbler.currentIndex + 1,
                               "year": yearTumbler.years[yearTumbler.currentIndex],
-                              "activated": true,
+                              "activated": false,
                               "label": "",
                               "repeat": false,
                               "daysToRepeat": [
@@ -42,13 +43,13 @@ Dialog{
 
                           })
         date.length = 0
-        date.push(yearTumbler.years[yearTumbler.currentIndex])
-        date.push(monthTumbler.currentIndex + 1)
-        date.push(dayTumbler.currentIndex + 1)
-        date.push(minutesTumbler.currentIndex)
-        date.push(hoursTumbler.currentIndex)
+        console.log(monthTumbler.currentIndex + 1)
+        date.push(formatNumber(yearTumbler.years[yearTumbler.currentIndex]))
+        date.push(formatNumber(monthTumbler.currentIndex + 1))
+        date.push(formatNumber(dayTumbler.currentIndex + 1))
+        date.push(formatNumber(minutesTumbler.currentIndex))
+        date.push(formatNumber(hoursTumbler.currentIndex))
         onQmlSignalA(date);
-
     }
 
     //点击拒绝按钮时关闭对话框
@@ -116,13 +117,13 @@ Dialog{
                 Component.onCompleted: updateModel()
 
                 delegate: TumblerDelegate {
-//                    Button{
-//                        width: 20
-//                        height:20
-//                        text: "测试按钮"
-//                        onClicked:console.log("1==",dayTumbler.currentIndex);
+                    //                    Button{
+                    //                        width: 20
+                    //                        height:20
+                    //                        text: "测试按钮"
+                    //                        onClicked:console.log("1==",dayTumbler.currentIndex);
 
-//                    }
+                    //                    }
                     text: formatNumber(modelData)
                 }
 

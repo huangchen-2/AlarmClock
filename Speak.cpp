@@ -10,7 +10,15 @@ Speak::Speak()
     timer = new QTimer();
     connect(timer,&QTimer::timeout,[this]
     {
-        Say->say("时间到了，您该工作了");
+        if(now_speak=="")
+        {
+            Say->say("时间到了");
+        }
+        else
+        {
+            Say->say("时间到了，您该"+now_speak+"了");
+        }
+
         speak_count++;
         qDebug()<<"调用";
         if(speak_count>=5)
@@ -20,15 +28,27 @@ Speak::Speak()
     });
 }
 
-void Speak::SpeakText()
+void Speak::SpeakText(int index)
 {
     if(Say->state()==QTextToSpeech::Ready)
     {
+        if(!(alarm_text.size()<=index))
+        {
+            now_speak = alarm_text.find(index).value();
+        }
+
         timer->start(3000);
     }
 }
 
-void Speak::GetText()
+void Speak::GetText(int index,QString str)
 {
-
+    if(alarm_text.contains(index))
+    {
+        alarm_text.find(index).value()=str;
+    }
+    else
+    {
+        alarm_text.insert(index,str);
+    }
 }

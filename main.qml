@@ -10,6 +10,7 @@ ApplicationWindow{
     id: window
     width: 400
     height: 500
+    flags: Qt.WindowStaysOnTopHint
     x:0
     y:0
     //窗口是否可见
@@ -17,7 +18,15 @@ ApplicationWindow{
     visible: true
 
     signal onQmlSignalA(variant date)
-    signal onSendText(string str)
+    signal onSendText(int index,string str)
+    signal whichBtn(int index,bool state)
+    signal deleteBtn(int index)
+
+    function startAnimation() {
+
+        anim.start()
+
+    }
 
     CppObject{
         id:cpp_obj
@@ -35,8 +44,12 @@ ApplicationWindow{
         //           console.log("....")
         //                                      ) //js的lambda
         //           //Qml对象的信号关联到Cpp
+        cpp_obj.ShouldShow.connect(startAnimation);
         window.onSendText.connect(cpp_obj.getText);
         window.onQmlSignalA.connect(cpp_obj.cppSlotA)
+        window.whichBtn.connect(cpp_obj.getState);
+        window.deleteBtn.connect(cpp_obj.deleteState)
+       // animation.start()//启动动画
     }
 
 
@@ -51,6 +64,7 @@ ApplicationWindow{
         //模型。提供数据
         model: AlarmModel {}
         //委托。以何种方式显示数据
+
         delegate: AlarmDelegate {}
 
     }
@@ -66,7 +80,7 @@ ApplicationWindow{
         //锚水平居中
         anchors.horizontalCenter: parent.horizontalCenter
         //单击进入添加界面
-        onClicked: alarmDialog.open()
+        onClicked: {alarmDialog.open()}
     }
 
     //自定义添加警报类
@@ -78,8 +92,26 @@ ApplicationWindow{
         //alarmModel自定义属性引用列表视图中的数据模型
         alarmModel: alarmListView.model
     }
+    ParallelAnimation{
+        id:anim
+        PropertyAnimation
+        {
+            id:animation
+            target:window
+            properties:"y"
+            to:290
+            duration: 5000
+        }
+        PropertyAnimation
+        {
+            id:movex
+            target:window
+            properties:"x"
+            to:780
+            duration: 5000
+        }
+    }
 
-    SmoothedAnimation on y { to: 500 ;duration: 5000}
 
 }
 

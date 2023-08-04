@@ -1,4 +1,4 @@
-#ifndef SPEAK_H
+﻿#ifndef SPEAK_H
 #define SPEAK_H
 
 #include <QObject>
@@ -14,8 +14,11 @@ public:
     QTextToSpeech *Say;
     QTimer *timer;
     int speak_count = 0;
+    QMap<int,QString> alarm_text;
+    QString now_speak = "";
 public slots:
-    void SpeakText();
+    void SpeakText(int index);
+    void GetText(int index, QString str);
 };
 
 #endif // SPEAK_H
