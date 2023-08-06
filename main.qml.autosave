@@ -27,10 +27,9 @@ ApplicationWindow{
         //因为和qwidget的show方式不一样，当我调用maximize的时候会全屏，我翻了文档好像需要对窗口大小进行再次设置
         if(window.visibility ==  Window.Minimized)
         {
-            console.log("11111")
             window.visibility = Window.Maximized
-//            window.width=400
-//            window.height= 500
+            window.width=400
+            window.height= 500
         }
 
 

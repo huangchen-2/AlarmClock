@@ -19,7 +19,7 @@ class CppObject : public QObject
 public:
     explicit CppObject(QObject *parent = nullptr);
 
-
+    void Send(bool);
 signals:
     //信号可以在QML中访问
     void cppSignalA();//一个无参信号

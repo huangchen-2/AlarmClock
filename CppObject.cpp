@@ -23,6 +23,12 @@ CppObject::CppObject(QObject *parent)
     connect(this,&CppObject::SendText,speak,&Speak::GetText);
 }
 
+void CppObject::Send(bool state)
+{
+    qDebug()<<"进入";
+    emit ShouldShow();
+}
+
 
 
 void CppObject::cppSlotA(QVariant date)

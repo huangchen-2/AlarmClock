@@ -7,4 +7,7 @@
         <file>AlarmDialog.qml</file>
         <file>TumblerDelegate.qml</file>
     </qresource>
+    <qresource prefix="/icon">
+        <file>icon/alarm.png</file>
+    </qresource>
 </RCC>
